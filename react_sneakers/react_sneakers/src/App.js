@@ -1,8 +1,11 @@
 import React from 'react';
+import axios from 'axios';
+import { Routes, Route} from 'react-router-dom';
 
-import Card from './components/Card';
 import Drawer from './components/Drawer';
 import Header from './components/Header';
+import Home from './pages/Home';
+import Favorities from './pages/Favorities';
 
 import './App.scss';
 
@@ -34,60 +37,120 @@ import './App.scss';
 function App() {
 
     const [items, setItems] = React.useState([]);
-
     const [cartOpened, setCartOpened] = React.useState(false);
-
     const [cartItems, setCartItems] = React.useState([]);
+    const [searchValue, setSearchValue] = React.useState('');
+    const [favorites, setFavorites] = React.useState([]);
 
-    const url = 'https://mocki.io/v1/872f5152-22e1-46cd-afc0-9d84e024a11d';
+    const urlElements = 'https://6431d8973adb15965175107b.mockapi.io/Sneakers';
+    const urlCart = 'https://6431d8973adb15965175107b.mockapi.io/Cart/';
+    const urlFav = 'https://64344d4b1c5ed06c95942a77.mockapi.io/Cart'
+
 
     React.useEffect(() => {
-        fetch(url).then((res) => {
-            return res.json();
-        }).then(json => {
-            setItems(json)
+        axios.get(urlElements).then((res) => {
+            setItems(res.data);
+        });
+        axios.get(urlCart).then((res) => {
+            setCartItems(res.data);
+        });
+        axios.get(urlFav).then((res) =>  {
+            setFavorites(res.data);
+
         });
     }, [])
 
-    const onAddToCart = (obj) => {
-        setCartItems((prev) => [...prev, obj])
+
+    // React.useEffect(() => {
+    //     fetch(urlGet).then((res) => {
+    //         return res.json();
+    //     }).then(json => {
+    //         setItems(json)
+    //     });
+    // }, [])
+
+    const onAddToCart = async (obj) => {
+        try { if (cartItems.find((item) => Number(item.id) === Number(obj.id))) {
+            setCartItems(prev => prev.filter(item => Number(item.id) !== Number(obj.id)));
+        } else {
+            const { data } = await axios.post(urlCart, obj);
+            setCartItems((prev) => [...prev, data]);
+        }
+        
+        } catch (error) {
+
+        }
     }
 
-    console.log(cartItems);
+    const onRemoveItem = (id) => {
+        axios.delete(`${urlCart}${id}`);
+        // console.log(id);
+        setCartItems((prev) => prev.filter((item) => item.id !== id));
 
+    }
 
+    const onCahangeSearchInput = (e) => {
+        setSearchValue(e.target.value);
+
+    }
+
+    const onAddToFavorite = async (obj) => {
+        if (favorites.find((favObj) => favObj.id === obj.id)) {
+            axios.delete(`${urlFav}/${obj.id}`);
+            setFavorites((prev) => prev.filter((item) => item.id !== obj.id ));   //Deleting from state on Fav page
+        } else {
+            const { data } = await axios.post(urlFav, obj);
+            setFavorites((prev) => [...prev, data]);
+        }
+    }
+
+    // const onAddToFavorite = async (obj) => {
+    //     try {
+    //       if (isFavorites.find((favObj) => Number(favObj.id) === Number(obj.id))) {
+    //         axios.delete(`https://mocki.io/v1/42dc2c3a-2403-4cf4-9fa2-b0508b7e7f75`);
+    //         setIsFavorites((prev) => prev.filter((item) => Number(item.id) !== Number(obj.id)));
+    //       } else {
+    //         const { data } = await axios.post(
+    //             'https://mocki.io/v1/42dc2c3a-2403-4cf4-9fa2-b0508b7e7f75',
+    //           obj,
+    //         );
+    //         setIsFavorites((prev) => [...prev, data]);
+    //       }
+    //     } catch (error) {
+    //       alert('Не удалось добавить в фавориты');
+    //       console.error(error);
+    //     }
+    //   };
 
 
     return (
         <div className="wrapper clear">
 
-            {cartOpened && <Drawer items={cartItems} onClose={() => setCartOpened(false)} />}
+            {cartOpened && <Drawer items={cartItems} onClose={() => setCartOpened(false)} 
+            onRemove={onRemoveItem}/>}
 
             <Header onClickCart={() => setCartOpened(true)}/>
 
-            <div className="content p-40">
-                <div className="d-flex align-center mb-40 justify-between">
-                    <h1>Все кроссовки</h1>
-                    <div className="search-block d-flex">
-                        <img src="/img/search.svg" alt="Search" />
-                        <input placeholder="Поиск..." />
-                    </div>
-                </div>
 
-                <div className="d-flex flex-wrap">
-                    {
-                        items.map((item) => (
-                            <Card 
-                                title={item.title} 
-                                price={item.price} 
-                                imageUrl={item.imageUrl}
-                                onPlus ={(obj) => onAddToCart(obj)}
-                                onFavorite ={() => console.log('click on Favorite')}
-                            />
-                        ))
-                    }
-                </div>
-            </div>
+            <Routes>
+                <Route path="/" element={<Home 
+                    items={items}
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    onCahangeSearchInput={onCahangeSearchInput}
+                    onAddToFavorites={onAddToFavorite}
+                    onAddToCart={onAddToCart}
+                    />}>
+                </Route>
+                <Route path="/favorities" element={<Favorities
+                    items={favorites}
+                    onAddToFavorite={onAddToFavorite}
+                    onAddToCart={onAddToCart}
+                    />}>
+                </Route>
+            </Routes>
+
+
         </div>
     );
 }

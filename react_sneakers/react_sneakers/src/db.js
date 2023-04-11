@@ -4,16 +4,7 @@ const arr = [
         price: 12999,
         imageUrl: '/img/sneakers/1.jpg'
     },
-    {
-        title: 'Мужские Кроссовки Nike Air Max 270',
-        price: 11500,
-        imageUrl: '/img/sneakers/2.jpg'
-    },
-    {
-        title: 'Мужские Кроссовки Nike Blazer Mid Suede',
-        price: 10500,
-        imageUrl: '/img/sneakers/3.jpg'
-    },
+
     {
         title: 'Кроссовки Puma X Aka Boku Future Rider',
         price: 13500,

@@ -55,6 +55,15 @@ cursor: pointer;
     border: 1px solid #f3f3f3;
     border-radius: 10px;
     padding: 0 15px;
+    position: relative;
+
+    .clear {
+        position: absolute;
+        right: 0;
+        height: 45.5px;
+
+
+    }
 
     input {
         border: 0;
@@ -73,18 +82,21 @@ cursor: pointer;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.1);
     z-index: 1;
+
 }
 
 .drawer {
-position: absolute;
-width: 420px;
-height: 100%;
-right: 0;
-background: #FFFFFF;
-box-shadow: -10px 4px 24px rgba(0, 0, 0, 0.1);
-padding: 30px;
-display: flex;
-flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: 420px;
+    height: 100%;
+    right: 0;
+    background: #FFFFFF;
+    box-shadow: -10px 4px 24px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-bottom: 50%;
+   
 
     .items {
         flex: 1;
@@ -94,22 +106,18 @@ flex-direction: column;
 
     h2 {
         margin: 0;
-        font-size: 24px;
     }
 }
 
 .cardTotalBlock {
-
-
-
     ul {
-        margin-top: 80% !important;
+        margin-top: 5% !important;
         display: block;
         margin-bottom: 40px !important;
         li {
             display: flex;
             align-items: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
         div {
             flex: 1 1 auto;
@@ -194,4 +202,32 @@ flex-direction: column;
             opacity: 1
         }
     }
+}
+
+.cartEmpty {
+
+    text-align: center;
+
+    p {
+        width: 280px;
+        line-height: 10;
+    }
+
+    .greenButton {
+        position: relative;
+
+        &:hover {
+            img {
+                transform: translateX(-10px);
+            }
+        }
+
+        img {
+            position: absolute;
+            right: 270px;
+            top: 20px;
+            transition: transform 0.15s ease-in-out;
+        }
+    }
+
 }
