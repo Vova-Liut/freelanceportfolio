@@ -1,6 +1,40 @@
 import Card from '../components/Card';
 
-const Home = ({ items, searchValue, setSearchValue, onCahangeSearchInput, onAddToCart, onAddToFavorites}) => {
+const Home = ({ 
+    items,
+    cartItems, 
+    searchValue, 
+    setSearchValue, 
+    onCahangeSearchInput, 
+    onAddToCart, 
+    onAddToFavorites,
+    isLoading,
+    }) => {
+
+    const renderItems = () => {
+        let uniqId = 1;
+
+        return ( 
+            isLoading  
+            ? [...Array(12)].map(() => (
+                <Card
+                    key={uniqId++}
+                    loading={isLoading}
+                /> 
+            ))  :
+            items.filter((item) => item.title.toLowerCase().includes(searchValue.toLowerCase()))
+                .map((item, index) => (
+                    <Card
+                        key={index} 
+                        onPlus ={(obj) => onAddToCart(obj)}
+                        added={cartItems.some(obj => obj.title === item.title)}
+                        onFavorite ={(obj) => onAddToFavorites(obj)}
+                        loading={isLoading}
+                        {...item}
+                    />)))
+    }
+    
+
     return ( 
         <div className="content p-40">
         <div className="d-flex align-center mb-40 justify-between">
@@ -20,16 +54,19 @@ const Home = ({ items, searchValue, setSearchValue, onCahangeSearchInput, onAddT
         </div>
 
             <div className="d-flex flex-wrap">
-                {items.filter((item) => item.title.toLowerCase().includes(searchValue.toLowerCase()))
-                        .map((item, index) => (
-                        <Card
-                            key={index} 
-                            onPlus ={(obj) => onAddToCart(obj)}
-                            onFavorite ={(obj) => onAddToFavorites(obj)}
-                            {...item}
-                        />
-                    ))
-                }
+                {/* {items.filter((item) => item.title.toLowerCase().includes(searchValue.toLowerCase()))
+                .map((item, index) => (
+                    <Card
+                        key={index} 
+                        onPlus ={(obj) => onAddToCart(obj)}
+                        added={cartItems.some(obj => obj.title === item.title)}
+                        onFavorite ={(obj) => onAddToFavorites(obj)}
+                        loading={isLoading}
+                        {...item}
+                    />))} */}
+                    {
+                        renderItems()
+                    }
             </div>
         </div>
     );
